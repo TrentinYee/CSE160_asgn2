@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>asgn2 Page</title>
+  </head>
+
+  <body onload="main()">
+    <canvas id="webgl" width="400" height="400">
+    Please use a browser that supports "canvas"
+    </canvas>
+
+    <script src="lib\cuon-utils.js"></script> <!--could be bad according to video somehow, not sure-->
+    <script src="lib\webgl-debug.js"></script>
+    <script src="lib\webgl-utils.js"></script>
+    <script src="lib\cuon-matrix-cse160.js"></script>
+    <script src="src\Point.js"></script>
+    <script src="src\Triangle.js"></script>
+    <script src="src\Circle.js"></script>
+    <script src="src\Cube.js"></script>
+    <script src="src\asgn2.js"></script>
+
+    <p id="numdot"> XXX </p>
+
+    <br></br>
+
+    <h1> Camera Angle: </h1>
+
+        <label for="XangleSlider">X</label>
+        <input type="range" id="XangleSlide" name="XangleSlider" min="-180" max="180" value="0" class="slider" />
+
+        <label for="YangleSlider">Y</label>
+        <input type="range" id="YangleSlide" name="YangleSlider" min="-180" max="180" value="0" class="slider" />
+
+        <label for="ZangleSlider">Z</label>
+        <input type="range" id="ZangleSlide" name="ZangleSlider" min="-180" max="180" value="0" class="slider" />
+
+    <h1> Left Arm </h1>
+
+    <h3> Left Upper Arm </h3>
+
+    <div>
+      <label for="luarmXSlider">X</label>
+        <input type="range" id="luarmXSlide" name="luarmXSlider" min="-90" max="10" value="0" class="slider" />
+
+        <label for="luarmYSlider">Y</label>
+        <input type="range" id="luarmYSlide" name="luarmYSlider" min="-85" max="65" value="0" class="slider" />
+
+      <label for="luarmZSlider">Z</label>
+        <input type="range" id="luarmZSlide" name="luarmZSlider" min="-85" max="65" value="0" class="slider" />
+    </div>
+
+    <h3> Left Forearm </h3>
+
+    <div>
+      <label for="lfarmXSlider">X</label>
+        <input type="range" id="lfarmXSlide" name="lfarmXSlider" min="-85" max="65" value="0" class="slider" />
+    </div>
+
+    <div>
+      <label for="lfarmYSlider">Y</label>
+        <input type="range" id="lfarmYSlide" name="lfarmYSlider" min="-85" max="65" value="0" class="slider" />
+    </div>
+    
+    <h3> Left Hand </h3>
+
+    <div>
+      <label for="lhandYSlider">X</label>
+        <input type="range" id="lhandXSlide" name="lhandXSlider" min="-85" max="25" value="0" class="slider" />
+    </div>
+
+    <div>
+      <label for="lhandZSlider">Z</label>
+        <input type="range" id="lhandZSlide" name="lhandZSlider" min="0" max="30" value="0" class="slider" />
+    </div>
+
+    <h1> Right Arm </h1>
+
+    <h3> Right Upper Arm </h3>
+
+    <div>
+      <label for="ruarmXSlider">X</label>
+        <input type="range" id="ruarmXSlide" name="ruarmXSlider" min="-90" max="10" value="0" class="slider" />
+
+        <label for="ruarmYSlider">Y</label>
+        <input type="range" id="ruarmYSlide" name="ruarmYSlider" min="-85" max="65" value="0" class="slider" />
+
+      <label for="ruarmZSlider">Z</label>
+        <input type="range" id="ruarmZSlide" name="ruarmZSlider" min="-85" max="65" value="0" class="slider" />
+    </div>
+
+    <h3> Right Forearm </h3>
+
+    <div>
+      <label for="rfarmXSlider">X</label>
+        <input type="range" id="rfarmXSlide" name="rfarmXSlider" min="-85" max="65" value="0" class="slider" />
+    </div>
+
+    <div>
+      <label for="rfarmYSlider">Y</label>
+        <input type="range" id="rfarmYSlide" name="rfarmYSlider" min="-85" max="65" value="0" class="slider" />
+    </div>
+    
+    <h3> Left Hand </h3>
+
+    <div>
+      <label for="rhandYSlider">X</label>
+        <input type="range" id="rhandXSlide" name="rhandXSlider" min="-85" max="25" value="0" class="slider" />
+    </div>
+
+    <div>
+      <label for="rhandZSlider">Z</label>
+        <input type="range" id="rhandZSlide" name="rhandZSlider" min="0" max="30" value="0" class="slider" />
+    </div>
+
+  </body>
+</html>
