@@ -233,7 +233,7 @@ function updateAnimationAngles() {
     g_larmAngle[1][0] = 15*Math.sin(5*g_seconds);
 
     // Right arm --------------
-    g_rarmAngle[1][0] = -15*Math.sin(5*g_seconds);
+    g_rarmAngle[1][0] = 15*Math.sin(5*g_seconds);
 
   }
 }
@@ -418,7 +418,7 @@ function renderAllShapes() {
   ruparm.matrix.rotate(270, 0, 0, 1); //initial rotation
   //ruparm.matrix.rotate(-25*Math.sin(5*g_seconds), 0, 1, 0);
   ruparm.matrix.rotate(g_rarmAngle[0][0], 1, 0, 0);
-  ruparm.matrix.rotate(g_rarmAngle[1][0], 0, 1, 0);
+  ruparm.matrix.rotate(-g_rarmAngle[1][0], 0, 1, 0);
   ruparm.matrix.rotate(-g_rarmAngle[2][0], 0, 0, 1);
   var rarmCoordinates = new Matrix4(ruparm.matrix);
   ruparm.matrix.scale(0.1, 0.2, 0.125);
