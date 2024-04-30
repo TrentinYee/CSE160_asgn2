@@ -37,6 +37,9 @@ let g_larmAngle = [[0,0,0],[0,0,0],[60, 0, 0]]; // every matrix is a dimension X
 let g_rarmAngle = [[0,0,0],[0,0,0],[60, 0, 0]];
 let g_tailAngle = [[25,25,25],[0,0,0],[0, 0, 0]];
 let g_idle = 0;
+let g_jutsu = 0;
+let g_globalScale = 1;
+let g_shrine;
 
 // all the UI interaction
 function addActionsForHtmlUI() {
@@ -44,6 +47,7 @@ function addActionsForHtmlUI() {
   document.getElementById('YangleSlide').addEventListener('mousemove', function() { g_globalAngle[1] = this.value; renderAllShapes(); });
   document.getElementById('XangleSlide').addEventListener('mousemove', function() { g_globalAngle[0] = this.value; renderAllShapes(); });
   document.getElementById('ZangleSlide').addEventListener('mousemove', function() { g_globalAngle[2] = this.value; renderAllShapes(); });
+  document.getElementById('ZoomSlide').addEventListener('mousemove', function() { g_globalScale = this.value/10; renderAllShapes(); });
 
   // Left Arm Sliders ----------------------------------
   // Left upper arm
@@ -90,8 +94,12 @@ function addActionsForHtmlUI() {
   document.getElementById('tail3ZSlide').addEventListener('mousemove', function() { g_tailAngle[2][2] = this.value; renderAllShapes(); });
   
   // Animation Buttons -------------------------
-  document.getElementById('IdleOn').onclick = function() { g_idle = 1;};
-  document.getElementById('IdleOff').onclick = function() { g_idle = 0;};
+  document.getElementById('Idle').onclick = function() { g_idle = 1;};
+  document.getElementById('Off').onclick = function() { g_idle = 0; g_jutsu = 0;};
+  document.getElementById('Reset').onclick = resetmodel;
+
+  // Audio ------------------
+  g_shrine = document.getElementById('shrine');
 }
 
 function setupWebGL() {
@@ -161,7 +169,15 @@ function main() {
   addActionsForHtmlUI();
 
   // Register function (event handler) to be called on a mouse press
-  canvas.onmousedown = click;
+  canvas.onmousedown = function(ev) {
+    if(ev.shiftKey) { 
+      resetmodel();
+      g_shrine.play();
+      g_jutsu = 1;
+    } else {
+      click(ev) 
+    } 
+  };
   canvas.onmousemove = function(ev) {if(ev.buttons == 1) { click(ev) } };
 
   // Specify the color for clearing <canvas>
@@ -198,7 +214,7 @@ var g_lastclick = [0, 0];
 function click(ev) {
   let [x, y] = convertCoordinatesEventToGL(ev);
 
-  console.log(g_lastclick);
+  //console.log(g_lastclick);
 
   g_globalAngle[0] += (y - g_lastclick[0]) * 90;
   g_globalAngle[1] += (x - g_lastclick[1]) * 90;
@@ -220,6 +236,16 @@ function convertCoordinatesEventToGL(ev) {
   return([x, y]);
 }
 
+var g_bottomy = -1.5;
+var g_topy = 1.5;
+var g_bottomog = -5.0;
+var g_topog = 5.0;
+var g_flash = 8.0;
+var g_flashstart = 0; //used as a tick timer
+var g_soundstart = 0;
+var g_ending = 0;
+var g_slash = -8.0;
+
 // Update the angles of everything if currently animated
 function updateAnimationAngles() {
   //console.log(g_idle);
@@ -234,9 +260,99 @@ function updateAnimationAngles() {
 
     // Right arm --------------
     g_rarmAngle[1][0] = 15*Math.sin(5*g_seconds);
+    
+  } else if(g_jutsu) { // Poke animation ---------------------------
+    gl.clearColor(0.5, 0.0, 0.0, 1.0);
+    g_bottomog = 0;
+    g_topog = 0;
+
+    // timer for this animation specifically -----------------
+    g_flashstart += 0.01;
+
+    // Black bars -------------------
+
+    if (g_bottomy <= -0.3) {
+      g_bottomy += 0.025;
+      //console.log(g_bottomy);
+    }
+    
+    if (g_topy >= 0.3) {
+      g_topy -= 0.025;
+      //console.log(g_topy);
+    }
+
+    // Zoom ------------------------
+
+    if (g_globalScale < 1.65) {
+      g_globalScale += 0.025;
+    } else if (g_globalScale > 1.75) {
+      g_globalScale -= 0.05;
+    }
+
+    // Left arm ------------
+    if (g_larmAngle[0][0] > -20) {
+      g_larmAngle[0][0] = -30*Math.abs(Math.sin(g_flashstart));
+    }
+
+    if (g_larmAngle[1][0] > -30) {
+      g_larmAngle[1][0] = -40*Math.abs(Math.sin(g_flashstart));
+    }
+
+    if (g_larmAngle[0][1] > -110) {
+      g_larmAngle[0][1] = -115*Math.abs(Math.sin(g_flashstart));
+    }
+    
+
+    // Right arm --------------
+    if (g_rarmAngle[0][0] > -20) {
+      g_rarmAngle[0][0] = -30*Math.abs(Math.sin(g_flashstart));
+    }
+
+    if (g_rarmAngle[1][0] > -30) {
+      g_rarmAngle[1][0] = -40*Math.abs(Math.sin(g_flashstart));
+    }
+
+    if (g_rarmAngle[0][1] > -110) {
+      g_rarmAngle[0][1] = -125*Math.abs(Math.sin(g_flashstart));
+    }
+
+    if (g_flashstart > 7.75) {
+      g_slash = 0.0;
+    }
+
+    if (g_flashstart > 8) {
+      g_flash = -1.0;
+    }
+
+    if (g_flashstart > 11) {
+      g_ending = 1;
+    }
+
+    // return to normal --------------------
+    if (g_ending) {
+      resetmodel();
+    }
 
   }
 }
+
+function resetmodel() {
+  g_bottomog = -3.0;
+  g_topog = 3.0;
+  g_flash = 8.0;
+  g_soundstart = 0;
+  g_jutsu = 0;
+  gl.clearColor(0.15, 0.14, 0.32, 1.0);
+  g_larmAngle = [[0,0,0],[0,0,0],[60, 0, 0]];
+  g_rarmAngle = [[0,0,0],[0,0,0],[60, 0, 0]];
+  g_tailAngle = [[25,25,25],[0,0,0],[0, 0, 0]];
+  g_globalAngle = [0, 0, 0];
+  g_globalScale = 1.0;
+  g_flashstart = 0;
+  g_ending = 0;
+  g_slash = -8;
+}
+
 
 // renders all stored shapes
 function renderAllShapes() {
@@ -249,6 +365,7 @@ function renderAllShapes() {
   globalRotMat.rotate(g_globalAngle[0],1,0,0);
   globalRotMat.rotate(g_globalAngle[1],0,1,0);
   globalRotMat.rotate(g_globalAngle[2],0,0,1);
+  globalRotMat.scale(g_globalScale, g_globalScale, g_globalScale);
   
   gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, globalRotMat.elements);
 
@@ -256,6 +373,34 @@ function renderAllShapes() {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   
   // pos, scale, irot, rot, color is the order
+
+  // black bars ----------------------------------------------
+
+  var bottombar = new Cube();
+  bottombar.color = [0.0,0.0,0.0,1.0];
+  //bottombar.matrix.translate(-1.0, -2.0, 1.0);
+  bottombar.matrix.translate(-1.0, g_bottomy + g_bottomog, 0.5);
+  bottombar.matrix.scale(2.0,-0.75,-0.1);
+  bottombar.render();
+
+  var topbar = new Cube();
+  topbar.color = [0.0,0.0,0.0,1.0];
+  topbar.matrix.translate(-1.0, g_topy + g_topog, 0.5);
+  topbar.matrix.scale(2.0, 0.75,-0.1);
+  topbar.render();
+
+  var flashbang = new Cube();
+  flashbang.color = [0.0,0.0,0.0,1.0];
+  flashbang.matrix.translate(-1.0, g_flash, -0.5);
+  flashbang.matrix.scale(2.0, 2.0,-0.1);
+  flashbang.render();
+
+  var cleave = new Cube();
+  cleave.color = [1.5,1.5,1.5,1.0];
+  console.log(g_slash);
+  cleave.matrix.translate(-1.0, g_slash, -0.52);
+  cleave.matrix.scale(2.0, 0.05,-0.1);
+  cleave.render();
 
   // body cube -------------------------------------------
   //var bodycoords = drawCube([-0.125,-0.125,0.0], [0.25,0.30,0.13], [0,0,0], [0,0,0], [0.1,0.1,0.1,1.0]);

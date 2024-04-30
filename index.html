@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <title>asgn2 Page</title>
+    <link rel="stylesheet" href="styles.css">
   </head>
 
   <body onload="main()">
@@ -24,8 +25,9 @@
     <p id="numdot"> XXX </p>
 
     <h4>Animation</h4>
-    <button type="button" id="IdleOn">Idle On</button>
-    <button type="button" id="IdleOff">Idle Off</button>
+    <button type="button" id="Idle">Idle On</button>
+    <button type="button" id="Off">Off</button>
+    <button type="button" id="Reset">Reset</button>
 
     <h2> Camera Angle: </h2>
 
@@ -37,6 +39,9 @@
 
         <label for="ZangleSlider">Z</label>
         <input type="range" id="ZangleSlide" name="ZangleSlider" min="-180" max="180" value="0" class="slider" />
+
+        <label for="ZoomSlider">Zoom</label>
+        <input type="range" id="ZoomSlide" name="ZoomSlider" min="2" max="80" value="10" class="slider" />
 
     <h2> Left Arm </h2>
 
@@ -57,7 +62,7 @@
 
     <div>
       <label for="lfarmXSlider">X</label>
-        <input type="range" id="lfarmXSlide" name="lfarmXSlider" min="-85" max="65" value="0" class="slider" />
+        <input type="range" id="lfarmXSlide" name="lfarmXSlider" min="-125" max="65" value="0" class="slider" />
   
       <label for="lfarmYSlider">Y</label>
         <input type="range" id="lfarmYSlide" name="lfarmYSlider" min="-85" max="65" value="0" class="slider" />
@@ -92,7 +97,7 @@
 
     <div>
       <label for="rfarmXSlider">X</label>
-        <input type="range" id="rfarmXSlide" name="rfarmXSlider" min="-85" max="65" value="0" class="slider" />
+        <input type="range" id="rfarmXSlide" name="rfarmXSlider" min="-125" max="65" value="0" class="slider" />
 
       <label for="rfarmYSlider">Y</label>
         <input type="range" id="rfarmYSlide" name="rfarmYSlider" min="-85" max="65" value="0" class="slider" />
@@ -148,6 +153,8 @@
       <label for="tail3Z1lider">Z</label>
       <input type="range" id="tail3ZSlide" name="tail3ZSlider" min="-85" max="85" value="0" class="slider" />
     </div>
+
+    <audio id="shrine" src="src/shrinesound.mp3"></audio>
 
   </body>
 </html>
