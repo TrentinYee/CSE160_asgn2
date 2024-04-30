@@ -18,13 +18,16 @@
     <script src="src\Triangle.js"></script>
     <script src="src\Circle.js"></script>
     <script src="src\Cube.js"></script>
+    <script src="src\TriangularPrism.js"></script>
     <script src="src\asgn2.js"></script>
 
     <p id="numdot"> XXX </p>
 
-    <br></br>
+    <h4>Animation</h4>
+    <button type="button" id="IdleOn">Idle On</button>
+    <button type="button" id="IdleOff">Idle Off</button>
 
-    <h1> Camera Angle: </h1>
+    <h2> Camera Angle: </h2>
 
         <label for="XangleSlider">X</label>
         <input type="range" id="XangleSlide" name="XangleSlider" min="-180" max="180" value="0" class="slider" />
@@ -35,9 +38,9 @@
         <label for="ZangleSlider">Z</label>
         <input type="range" id="ZangleSlide" name="ZangleSlider" min="-180" max="180" value="0" class="slider" />
 
-    <h1> Left Arm </h1>
+    <h2> Left Arm </h2>
 
-    <h3> Left Upper Arm </h3>
+    <h4> Left Upper Arm </h4>
 
     <div>
       <label for="luarmXSlider">X</label>
@@ -47,36 +50,32 @@
         <input type="range" id="luarmYSlide" name="luarmYSlider" min="-85" max="65" value="0" class="slider" />
 
       <label for="luarmZSlider">Z</label>
-        <input type="range" id="luarmZSlide" name="luarmZSlider" min="-85" max="65" value="0" class="slider" />
+        <input type="range" id="luarmZSlide" name="luarmZSlider" min="-85" max="65" value="60" class="slider" />
     </div>
 
-    <h3> Left Forearm </h3>
+    <h4> Left Forearm </h4>
 
     <div>
       <label for="lfarmXSlider">X</label>
         <input type="range" id="lfarmXSlide" name="lfarmXSlider" min="-85" max="65" value="0" class="slider" />
-    </div>
-
-    <div>
+  
       <label for="lfarmYSlider">Y</label>
         <input type="range" id="lfarmYSlide" name="lfarmYSlider" min="-85" max="65" value="0" class="slider" />
     </div>
     
-    <h3> Left Hand </h3>
+    <h4> Left Hand </h4>
 
     <div>
       <label for="lhandYSlider">X</label>
         <input type="range" id="lhandXSlide" name="lhandXSlider" min="-85" max="25" value="0" class="slider" />
-    </div>
 
-    <div>
       <label for="lhandZSlider">Z</label>
         <input type="range" id="lhandZSlide" name="lhandZSlider" min="0" max="30" value="0" class="slider" />
     </div>
 
-    <h1> Right Arm </h1>
+    <h2> Right Arm </h2>
 
-    <h3> Right Upper Arm </h3>
+    <h4> Right Upper Arm </h4>
 
     <div>
       <label for="ruarmXSlider">X</label>
@@ -86,31 +85,68 @@
         <input type="range" id="ruarmYSlide" name="ruarmYSlider" min="-85" max="65" value="0" class="slider" />
 
       <label for="ruarmZSlider">Z</label>
-        <input type="range" id="ruarmZSlide" name="ruarmZSlider" min="-85" max="65" value="0" class="slider" />
+        <input type="range" id="ruarmZSlide" name="ruarmZSlider" min="-85" max="65" value="60" class="slider" />
     </div>
 
-    <h3> Right Forearm </h3>
+    <h4> Right Forearm </h4>
 
     <div>
       <label for="rfarmXSlider">X</label>
         <input type="range" id="rfarmXSlide" name="rfarmXSlider" min="-85" max="65" value="0" class="slider" />
-    </div>
 
-    <div>
       <label for="rfarmYSlider">Y</label>
         <input type="range" id="rfarmYSlide" name="rfarmYSlider" min="-85" max="65" value="0" class="slider" />
     </div>
     
-    <h3> Left Hand </h3>
+    <h4> Right Hand </h4>
 
     <div>
       <label for="rhandYSlider">X</label>
         <input type="range" id="rhandXSlide" name="rhandXSlider" min="-85" max="25" value="0" class="slider" />
-    </div>
 
-    <div>
       <label for="rhandZSlider">Z</label>
         <input type="range" id="rhandZSlide" name="rhandZSlider" min="0" max="30" value="0" class="slider" />
+    </div>
+
+    <h2> Tail </h2>
+
+    <h4> Tail1 </h4>
+
+    <div>
+      <label for="tail1XSlider">X</label>
+      <input type="range" id="tail1XSlide" name="tail1XSlider" min="-85" max="85" value="25" class="slider" />
+
+      <label for="tail1YSlider">Y</label>
+      <input type="range" id="tail1YSlide" name="tail1YSlider" min="-85" max="65" value="0" class="slider" />
+
+      <label for="tail1Z1lider">Z</label>
+      <input type="range" id="tail1ZSlide" name="tail1ZSlider" min="-85" max="85" value="0" class="slider" />
+    </div>
+
+    <h4> Tail2 </h4>
+
+    <div>
+      <label for="tail2XSlider">X</label>
+      <input type="range" id="tail2XSlide" name="tail2XSlider" min="-85" max="85" value="25" class="slider" />
+
+      <label for="tail2YSlider">Y</label>
+      <input type="range" id="tail2YSlide" name="tail2YSlider" min="-85" max="65" value="0" class="slider" />
+
+      <label for="tail2Z1lider">Z</label>
+      <input type="range" id="tail2ZSlide" name="tail2ZSlider" min="-85" max="85" value="0" class="slider" />
+    </div>
+    
+    <h4> Tail3 </h4>
+
+    <div>
+      <label for="tail3XSlider">X</label>
+      <input type="range" id="tail3XSlide" name="tail3XSlider" min="-85" max="85" value="25" class="slider" />
+
+      <label for="tail3YSlider">Y</label>
+      <input type="range" id="tail3YSlide" name="tail3YSlider" min="-85" max="65" value="0" class="slider" />
+
+      <label for="tail3Z1lider">Z</label>
+      <input type="range" id="tail3ZSlide" name="tail3ZSlider" min="-85" max="85" value="0" class="slider" />
     </div>
 
   </body>

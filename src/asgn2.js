@@ -33,8 +33,10 @@ let u_FragColor;
 let g_selectedColor = [1.0, 1.0, 1.0, 1.0];
 let g_selectedType=POINT;
 let g_globalAngle = [0, 0, 0];
-let g_larmAngle = [[0,0,0],[0,0,0],[0, 0, 0]];
-let g_rarmAngle = [[0,0,0],[0,0,0],[0, 0, 0]];
+let g_larmAngle = [[0,0,0],[0,0,0],[60, 0, 0]]; // every matrix is a dimension XYZ and the elements in the matrix are for each individual shape
+let g_rarmAngle = [[0,0,0],[0,0,0],[60, 0, 0]];
+let g_tailAngle = [[25,25,25],[0,0,0],[0, 0, 0]];
+let g_idle = 0;
 
 // all the UI interaction
 function addActionsForHtmlUI() {
@@ -43,7 +45,7 @@ function addActionsForHtmlUI() {
   document.getElementById('XangleSlide').addEventListener('mousemove', function() { g_globalAngle[0] = this.value; renderAllShapes(); });
   document.getElementById('ZangleSlide').addEventListener('mousemove', function() { g_globalAngle[2] = this.value; renderAllShapes(); });
 
-  // Left Arm Sliders
+  // Left Arm Sliders ----------------------------------
   // Left upper arm
   document.getElementById('luarmXSlide').addEventListener('mousemove', function() { g_larmAngle[0][0] = this.value; renderAllShapes(); });
   document.getElementById('luarmYSlide').addEventListener('mousemove', function() { g_larmAngle[1][0] = this.value; renderAllShapes(); });
@@ -57,7 +59,7 @@ function addActionsForHtmlUI() {
   document.getElementById('lhandXSlide').addEventListener('mousemove', function() { g_larmAngle[0][2] = this.value; renderAllShapes(); });
   document.getElementById('lhandZSlide').addEventListener('mousemove', function() { g_larmAngle[2][2] = this.value; renderAllShapes(); });
 
-  // Right Arm Sliders
+  // Right Arm Sliders -------------------------
   // Right upper arm
   document.getElementById('ruarmXSlide').addEventListener('mousemove', function() { g_rarmAngle[0][0] = this.value; renderAllShapes(); });
   document.getElementById('ruarmYSlide').addEventListener('mousemove', function() { g_rarmAngle[1][0] = this.value; renderAllShapes(); });
@@ -71,6 +73,25 @@ function addActionsForHtmlUI() {
   document.getElementById('rhandXSlide').addEventListener('mousemove', function() { g_rarmAngle[0][2] = this.value; renderAllShapes(); });
   document.getElementById('rhandZSlide').addEventListener('mousemove', function() { g_rarmAngle[2][2] = this.value; renderAllShapes(); });
 
+  // Tail Sliders --------------------------
+  // Tail 1
+  document.getElementById('tail1XSlide').addEventListener('mousemove', function() { g_tailAngle[0][0] = this.value; renderAllShapes(); });
+  document.getElementById('tail1YSlide').addEventListener('mousemove', function() { g_tailAngle[1][0] = this.value; renderAllShapes(); });
+  document.getElementById('tail1ZSlide').addEventListener('mousemove', function() { g_tailAngle[2][0] = this.value; renderAllShapes(); });
+
+  // Tail 2
+  document.getElementById('tail2XSlide').addEventListener('mousemove', function() { g_tailAngle[0][1] = this.value; renderAllShapes(); });
+  document.getElementById('tail2YSlide').addEventListener('mousemove', function() { g_tailAngle[1][1] = this.value; renderAllShapes(); });
+  document.getElementById('tail2ZSlide').addEventListener('mousemove', function() { g_tailAngle[2][1] = this.value; renderAllShapes(); });
+
+  // Tail 3
+  document.getElementById('tail3XSlide').addEventListener('mousemove', function() { g_tailAngle[0][2] = this.value; renderAllShapes(); });
+  document.getElementById('tail3YSlide').addEventListener('mousemove', function() { g_tailAngle[1][2] = this.value; renderAllShapes(); });
+  document.getElementById('tail3ZSlide').addEventListener('mousemove', function() { g_tailAngle[2][2] = this.value; renderAllShapes(); });
+  
+  // Animation Buttons -------------------------
+  document.getElementById('IdleOn').onclick = function() { g_idle = 1;};
+  document.getElementById('IdleOff').onclick = function() { g_idle = 0;};
 }
 
 function setupWebGL() {
@@ -147,14 +168,23 @@ function main() {
   gl.clearColor(0.15, 0.14, 0.32, 1.0);
 
   renderAllShapes();
-  //requestAnimationFrame(tick);
+  requestAnimationFrame(tick);
 }
 
-function tick() {
-  console.log(performance.now());
+var g_startTime=performance.now()/1000.0;
+var g_seconds=performance.now()/1000.0-g_startTime;
 
+function tick() {
+  // save current time
+  g_seconds=performance.now()/1000.0-g_startTime;
+  //console.log(g_seconds);
+
+  updateAnimationAngles();
+
+  // Draw everything
   renderAllShapes();
 
+  // Tell the browser to update again when it has time
   requestAnimationFrame(tick);
 }
 
@@ -163,12 +193,22 @@ function clearCanvas() {
   renderAllShapes();
 }
 
-function click(ev) {
+var g_lastclick = [0, 0];
 
+function click(ev) {
+  let [x, y] = convertCoordinatesEventToGL(ev);
+
+  console.log(g_lastclick);
+
+  g_globalAngle[0] += (y - g_lastclick[0]) * 90;
+  g_globalAngle[1] += (x - g_lastclick[1]) * 90;
+
+  g_lastclick[0] = y;
+  g_lastclick[1] = x;
   renderAllShapes();
 }
 
-/*// converts the coordiantes of the event to the coordinates needed
+// converts the coordiantes of the event to the coordinates needed
 function convertCoordinatesEventToGL(ev) {
   var x = ev.clientX; // x coordinate of a mouse pointer
   var y = ev.clientY; // y coordinate of a mouse pointer
@@ -178,7 +218,25 @@ function convertCoordinatesEventToGL(ev) {
   y = (canvas.height/2 - (y - rect.top))/(canvas.height/2);
 
   return([x, y]);
-}*/
+}
+
+// Update the angles of everything if currently animated
+function updateAnimationAngles() {
+  //console.log(g_idle);
+  if (g_idle) {
+    // Tail --------------
+    g_tailAngle[2][0] = 45*Math.sin(2*g_seconds);
+    g_tailAngle[2][1] = 25*Math.sin(2*g_seconds);
+    g_tailAngle[2][2] = 60*Math.sin(2*g_seconds);
+
+    // Left arm ------------
+    g_larmAngle[1][0] = 15*Math.sin(5*g_seconds);
+
+    // Right arm --------------
+    g_rarmAngle[1][0] = -15*Math.sin(5*g_seconds);
+
+  }
+}
 
 // renders all stored shapes
 function renderAllShapes() {
@@ -205,25 +263,64 @@ function renderAllShapes() {
   var body = new Cube();
   body.color = [0.1,0.1,0.1,1.0];
   body.matrix.translate(-0.125,-0.125,0.0);
-  const bodycoords = new Matrix4(body.matrix);
-  const bodycoords1 = new Matrix4(body.matrix);
+  var bodycoords = [new Matrix4(body.matrix)];
+  for (let j = 0; j < 3; j++) {
+    bodycoords.push(new Matrix4(body.matrix));  
+  }
   body.matrix.scale(0.25,0.30,0.13);
   body.render();
 
   var belt = new Cube();
   belt.color = [1.0,0.0,0.0,1.0];
-  belt.matrix = bodycoords;
+  belt.matrix = bodycoords[0];
   belt.matrix.translate(0, -0.07, 0);
   belt.matrix.scale(0.25, 0.075, 0.13);
   belt.render();
 
   var neck = new Cube();
   neck.color = [1.0,0.0,0.0,1.0];
-  neck.matrix = bodycoords1;
+  neck.matrix = bodycoords[1];
   neck.matrix.translate(0, 0.3, 0);
   neck.matrix.scale(0.25, 0.075, 0.13);
   neck.render();
-  
+
+  // tail cubes ---------------------------------
+
+  var tail1 = new Cube();
+  tail1.color = [0.9,0.9,0.9,1.0];
+  tail1.matrix = bodycoords[2];
+  tail1.matrix.translate(0.085, 0, 0.1);
+  tail1.matrix.rotate(90, 1, 0, 0);
+  tail1.matrix.rotate(g_tailAngle[0][0], 1, 0, 0); //X
+  tail1.matrix.rotate(g_tailAngle[1][0], 0, 1, 0); //Y
+  tail1.matrix.rotate(g_tailAngle[2][0], 0, 0, 1); //Z
+  //tail1.matrix.rotate(45*Math.sin(2*g_seconds), 0, 0, 1);
+  var tail1coords = new Matrix4(tail1.matrix);
+  tail1.matrix.scale(0.075, 0.25, 0.075);
+  tail1.render();
+
+  var tail2 = new Cube();
+  tail2.color = [0.9,0.9,0.9,1.0];
+  tail2.matrix = tail1coords;
+  tail2.matrix.translate(0.0, 0.25, 0.0);
+  tail2.matrix.rotate(g_tailAngle[0][1], 1, 0, 0);
+  tail2.matrix.rotate(g_tailAngle[1][1], 0, 1, 0);
+  tail2.matrix.rotate(g_tailAngle[2][1], 0, 0, 1);
+  //tail2.matrix.rotate(25*Math.sin(2*g_seconds), 0, 0, 1);
+  var tail2coords = new Matrix4(tail2.matrix);
+  tail2.matrix.scale(0.075, 0.15, 0.075);
+  tail2.render();
+
+  var tail3 = new Cube();
+  tail3.color = [0.9,0.9,0.9,1.0];
+  tail3.matrix = tail2coords;
+  tail3.matrix.translate(0.0, 0.15, 0.0);
+  tail3.matrix.rotate(g_tailAngle[0][2], 1, 0, 0);
+  tail3.matrix.rotate(g_tailAngle[1][2], 0, 1, 0);
+  tail3.matrix.rotate(g_tailAngle[2][2], 0, 0, 1);
+  //tail3.matrix.rotate(60*Math.sin(2*g_seconds), 0, 0, 1);
+  tail3.matrix.scale(0.075, 0.15, 0.075);
+  tail3.render();
   
   // head cube -----------------------------------------
   var head = new Cube();
@@ -258,14 +355,37 @@ function renderAllShapes() {
   head2.matrix.scale(0.25,0.15,0.25);
   head2.render();
 
+  var mask = new Cube();
+  mask.color = [0.07,0.07,0.07,1.0];
+  mask.matrix = headcoords[5];
+  mask.matrix.translate(0.05, 0.0, -0.05);
+  mask.matrix.scale(0.15,0.1,0.05);
+  mask.render();
+
+  var lear = new Triprism();
+  lear.color = [0.8, 0.8, 0.8, 1.0];
+  lear.matrix = headcoords[3];
+  lear.matrix.translate(0, 0.25, 0.05);
+  lear.matrix.scale(0.09,0.12,0.09);
+  lear.render();
+
+  var rear = new Triprism();
+  rear.color = [0.8, 0.8, 0.8, 1.0];
+  rear.matrix = headcoords[4];
+  rear.matrix.translate(0.1575, 0.25, 0.05);
+  rear.matrix.scale(0.09,0.12,0.09);
+  rear.render();
+
   // left arm --------------------------------------------
   var luparm = new Cube();
   luparm.color = [0.9,0.9,0.9,1.0];
   luparm.matrix.translate(-0.125, 0.25, 0.0);
   luparm.matrix.rotate(90, 0, 0, 1); //initial rotation
+  //luparm.matrix.rotate(25*Math.sin(5*g_seconds), 0, 1, 0);
   luparm.matrix.rotate(g_larmAngle[0][0], 1, 0, 0);
-  luparm.matrix.rotate(g_larmAngle[1][0], 0, 1, 0);
-  luparm.matrix.rotate(g_larmAngle[2][0], 0, 0, 1);
+  luparm.matrix.rotate(g_larmAngle[1][0], 0, 1, 0); //Y
+  luparm.matrix.rotate(g_larmAngle[2][0], 0, 0, 1); //Z
+  
   var larmCoordinates = new Matrix4(luparm.matrix);
   luparm.matrix.scale(-0.1, 0.2, 0.125);
   luparm.render();
@@ -296,6 +416,7 @@ function renderAllShapes() {
   ruparm.color = [0.9,0.9,0.9,1.0];
   ruparm.matrix.translate(0.125, 0.25, 0.0);
   ruparm.matrix.rotate(270, 0, 0, 1); //initial rotation
+  //ruparm.matrix.rotate(-25*Math.sin(5*g_seconds), 0, 1, 0);
   ruparm.matrix.rotate(g_rarmAngle[0][0], 1, 0, 0);
   ruparm.matrix.rotate(g_rarmAngle[1][0], 0, 1, 0);
   ruparm.matrix.rotate(-g_rarmAngle[2][0], 0, 0, 1);
