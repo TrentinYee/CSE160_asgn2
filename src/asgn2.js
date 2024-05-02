@@ -36,6 +36,8 @@ let g_globalAngle = [0, 0, 0];
 let g_larmAngle = [[0,0,0],[0,0,0],[60, 0, 0]]; // every matrix is a dimension XYZ and the elements in the matrix are for each individual shape
 let g_rarmAngle = [[0,0,0],[0,0,0],[60, 0, 0]];
 let g_tailAngle = [[25,25,25],[0,0,0],[0, 0, 0]];
+let g_llegAngle = [[0,0,0],[0,0,0],[0, 0, 0]];
+let g_rlegAngle = [[0,0,0],[0,0,0],[0, 0, 0]];
 let g_idle = 0;
 let g_jutsu = 0;
 let g_globalScale = 1;
@@ -92,7 +94,33 @@ function addActionsForHtmlUI() {
   document.getElementById('tail3XSlide').addEventListener('mousemove', function() { g_tailAngle[0][2] = this.value; renderAllShapes(); });
   document.getElementById('tail3YSlide').addEventListener('mousemove', function() { g_tailAngle[1][2] = this.value; renderAllShapes(); });
   document.getElementById('tail3ZSlide').addEventListener('mousemove', function() { g_tailAngle[2][2] = this.value; renderAllShapes(); });
-  
+
+  // Right Leg Sliders ---------------------------------------------------------
+  // Thigh
+  document.getElementById('rthighXSlide').addEventListener('mousemove', function() { g_rlegAngle[0][0] = this.value; renderAllShapes(); });
+  document.getElementById('rthighYSlide').addEventListener('mousemove', function() { g_rlegAngle[1][0] = this.value; renderAllShapes(); });
+  document.getElementById('rthighZSlide').addEventListener('mousemove', function() { g_rlegAngle[2][0] = this.value; renderAllShapes(); });
+
+  // Shin
+  document.getElementById('rshinXSlide').addEventListener('mousemove', function() { g_rlegAngle[0][1] = this.value; renderAllShapes(); });
+
+  // Foot
+  document.getElementById('rfootXSlide').addEventListener('mousemove', function() { g_rlegAngle[0][2] = this.value; renderAllShapes(); });
+  document.getElementById('rfootYSlide').addEventListener('mousemove', function() { g_rlegAngle[1][2] = this.value; renderAllShapes(); });
+
+  // Left Leg Sliders ---------------------------------------------------------
+  // Thigh
+  document.getElementById('lthighXSlide').addEventListener('mousemove', function() { g_llegAngle[0][0] = this.value; renderAllShapes(); });
+  document.getElementById('lthighYSlide').addEventListener('mousemove', function() { g_llegAngle[1][0] = this.value; renderAllShapes(); });
+  document.getElementById('lthighZSlide').addEventListener('mousemove', function() { g_llegAngle[2][0] = this.value; renderAllShapes(); });
+
+  // Shin
+  document.getElementById('lshinXSlide').addEventListener('mousemove', function() { g_llegAngle[0][1] = this.value; renderAllShapes(); });
+
+  // Foot
+  document.getElementById('lfootXSlide').addEventListener('mousemove', function() { g_llegAngle[0][2] = this.value; renderAllShapes(); });
+  document.getElementById('lfootYSlide').addEventListener('mousemove', function() { g_llegAngle[1][2] = this.value; renderAllShapes(); });
+
   // Animation Buttons -------------------------
   document.getElementById('Idle').onclick = function() { g_idle = 1;};
   document.getElementById('Off').onclick = function() { g_idle = 0; g_jutsu = 0;};
@@ -178,7 +206,7 @@ function main() {
       click(ev) 
     } 
   };
-  canvas.onmousemove = function(ev) {if(ev.buttons == 1) { click(ev) } };
+  canvas.onmousemove = function(ev) {if(ev.buttons == 1) { drag(ev) } };
 
   // Specify the color for clearing <canvas>
   gl.clearColor(0.15, 0.14, 0.32, 1.0);
@@ -216,11 +244,23 @@ function click(ev) {
 
   //console.log(g_lastclick);
 
-  g_globalAngle[0] += (y - g_lastclick[0]) * 90;
-  g_globalAngle[1] += (x - g_lastclick[1]) * 90;
+  //g_globalAngle[0] += (y - g_lastclick[0]) * 90;
+  //g_globalAngle[1] += (x - g_lastclick[1]) * 90;
 
   g_lastclick[0] = y;
   g_lastclick[1] = x;
+  renderAllShapes();
+}
+
+function drag(ev) {
+  let [x, y] = convertCoordinatesEventToGL(ev);
+
+  //console.log(g_lastclick);
+  //console.log(x);
+  //console.log(y);
+  g_globalAngle[0] -= (y - g_lastclick[0]) * 2;
+  g_globalAngle[1] -= (x - g_lastclick[1]) * 2;
+  
   renderAllShapes();
 }
 
@@ -347,6 +387,8 @@ function resetmodel() {
   g_larmAngle = [[0,0,0],[0,0,0],[60, 0, 0]];
   g_rarmAngle = [[0,0,0],[0,0,0],[60, 0, 0]];
   g_tailAngle = [[25,25,25],[0,0,0],[0, 0, 0]];
+  g_llegAngle = [[0,0,0],[0,0,0],[0, 0, 0]];
+  g_rlegAngle = [[0,0,0],[0,0,0],[0, 0, 0]];
   g_globalAngle = [0, 0, 0];
   g_globalScale = 1.0;
   g_flashstart = 0;
@@ -398,7 +440,7 @@ function renderAllShapes() {
 
   var cleave = new Cube();
   cleave.color = [1.5,1.5,1.5,1.0];
-  console.log(g_slash);
+  //console.log(g_slash);
   cleave.matrix.translate(-1.0, g_slash, -0.52);
   cleave.matrix.scale(2.0, 0.05,-0.1);
   cleave.render();
@@ -596,65 +638,63 @@ function renderAllShapes() {
   
   var lthigh = new Cube();
   lthigh.color = [0.1,0.1,0.1,1.0];
-  lthigh.matrix.translate(0,-0.49, 0.0);
+  lthigh.matrix.translate(0,-0.19, 0.0);
   lthigh.matrix.rotate(0, 0, 0, 1); //initial rotation
-  //lthigh.matrix.rotate(g_llegAngle[0][0], 1, 0, 0);
-  //lthigh.matrix.rotate(g_llegAngle[1][0], 0, 1, 0);
-  //lthigh.matrix.rotate(g_llegAngle[2][0], 0, 0, 1);
+  lthigh.matrix.rotate(g_llegAngle[0][0], 1, 0, 0);
+  lthigh.matrix.rotate(g_llegAngle[1][0], 0, 1, 0);
+  lthigh.matrix.rotate(g_llegAngle[2][0], 0, 0, 1);
   var lthighCoordinates = new Matrix4(lthigh.matrix);
-  lthigh.matrix.scale(-0.15, 0.3, 0.125);
+  lthigh.matrix.scale(-0.15, -0.3, 0.125);
   lthigh.render();
   
   var lshin = new Cube();
   lshin.color = [0.2,0.2,0.2,1.0];
   lshin.matrix = lthighCoordinates;
-  lshin.matrix.translate(-0.01625, -0.2, 0.0125);
-  //lshin.matrix.rotate(g_llegAngle[0][1], 1, 0, 0);
-  //lshin.matrix.rotate(g_llegAngle[1][1], 0, 1, 0);
+  lshin.matrix.translate(-0.01625, -0.3, 0.0125);
+  lshin.matrix.rotate(g_llegAngle[0][1], 1, 0, 0);
   var lshinCoords = new Matrix4(lshin.matrix);
-  lshin.matrix.scale(-0.125, 0.25, 0.1);
+  lshin.matrix.scale(-0.125, -0.25, 0.1);
   lshin.render();
 
   var lfoot = new Cube();
   lfoot.color = [0.137,0.09,0.06,1.0];
   lfoot.matrix = lshinCoords;
-  lfoot.matrix.translate(0.00625, -0.1, -0.0125);
-  //lfoot.matrix.rotate(g_llegAngle[0][2], 1, 0, 0);
-  //lfoot.matrix.rotate(g_llegAngle[2][2], 0, 0, 1);
-  lfoot.matrix.scale(-0.125, 0.1, 0.15);
+  lfoot.matrix.translate(0.01, -0.2, 0.101);
+  lfoot.matrix.rotate(g_llegAngle[0][2], 1, 0, 0);
+  lfoot.matrix.rotate(g_llegAngle[1][2], 0, 1, 0);
+  lfoot.matrix.scale(-0.14, -0.1, -0.17);
   lfoot.render();
 
   // right leg ---------------------------------------------------------------------
   
   var rthigh = new Cube();
   rthigh.color = [0.1,0.1,0.1,1.0];
-  rthigh.matrix.translate(0,-0.49, 0.0);
+  rthigh.matrix.translate(0,-0.19, 0.0);
   rthigh.matrix.rotate(0, 0, 0, 1); //initial rotation
-  //rthigh.matrix.rotate(g_rlegAngle[0][0], 1, 0, 0);
-  //rthigh.matrix.rotate(g_rlegAngle[1][0], 0, 1, 0);
-  //rthigh.matrix.rotate(g_rlegAngle[2][0], 0, 0, 1);
+  rthigh.matrix.rotate(g_rlegAngle[0][0], 1, 0, 0);
+  rthigh.matrix.rotate(g_rlegAngle[1][0], 0, 1, 0);
+  rthigh.matrix.rotate(g_rlegAngle[2][0], 0, 0, 1);
   var rthighCoordinates = new Matrix4(rthigh.matrix);
-  rthigh.matrix.scale(0.15, 0.3, 0.125);
+  rthigh.matrix.scale(0.15, -0.3, 0.125);
   rthigh.render();
   
   var rshin = new Cube();
   rshin.color = [0.2,0.2,0.2,1.0];
   rshin.matrix = rthighCoordinates;
-  rshin.matrix.translate(0.01625, -0.2, 0.0125);
-  //rshin.matrix.rotate(g_rlegAngle[0][1], 1, 0, 0);
-  //rshin.matrix.rotate(g_rlegAngle[1][1], 0, 1, 0);
+  rshin.matrix.translate(0.01625, -0.3, 0.0125);
+  rshin.matrix.rotate(g_rlegAngle[0][1], 1, 0, 0);
   var rshinCoords = new Matrix4(rshin.matrix);
-  rshin.matrix.scale(0.125, 0.25, 0.1);
+  rshin.matrix.scale(0.125, -0.25, 0.1);
   rshin.render();
 
-  var rsoot = new Cube();
-  rsoot.color = [0.137,0.09,0.06,1.0];
-  rsoot.matrix = rshinCoords;
-  rsoot.matrix.translate(0.00625, -0.1, -0.0125);
-  //rsoot.matrix.rotate(g_rlegAngle[0][2], 1, 0, 0);
-  //rsoot.matrix.rotate(g_rlegAngle[2][2], 0, 0, 1);
-  rsoot.matrix.scale(0.125, 0.1, 0.15);
-  rsoot.render();
+  var rfoot = new Cube();
+  rfoot.color = [0.137,0.09,0.06,1.0];
+  rfoot.matrix = rshinCoords;
+  rfoot.matrix.translate(-0.01, -0.2, 0.101);
+  rfoot.matrix.rotate(g_rlegAngle[0][2], 1, 0, 0);
+  rfoot.matrix.rotate(g_rlegAngle[1][2], 0, 1, 0);
+  rfoot.matrix.scale(0.14, -0.1, -0.17);
+  rfoot.render();
 
   // performance stuff
   var duration = performance.now() - startTime;
