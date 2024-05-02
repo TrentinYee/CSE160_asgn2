@@ -339,6 +339,7 @@ function updateAnimationAngles() {
 function resetmodel() {
   g_bottomog = -3.0;
   g_topog = 3.0;
+  g_idle = 0;
   g_flash = 8.0;
   g_soundstart = 0;
   g_jutsu = 0;
@@ -524,7 +525,7 @@ function renderAllShapes() {
   // left arm --------------------------------------------
   var luparm = new Cube();
   luparm.color = [0.9,0.9,0.9,1.0];
-  luparm.matrix.translate(-0.125, 0.25, 0.0);
+  luparm.matrix.translate(-0.125, 0.25, 0.001);
   luparm.matrix.rotate(90, 0, 0, 1); //initial rotation
   //luparm.matrix.rotate(25*Math.sin(5*g_seconds), 0, 1, 0);
   luparm.matrix.rotate(g_larmAngle[0][0], 1, 0, 0);
@@ -559,7 +560,7 @@ function renderAllShapes() {
   // right arm --------------------------------------------
   var ruparm = new Cube();
   ruparm.color = [0.9,0.9,0.9,1.0];
-  ruparm.matrix.translate(0.125, 0.25, 0.0);
+  ruparm.matrix.translate(0.125, 0.25, 0.001);
   ruparm.matrix.rotate(270, 0, 0, 1); //initial rotation
   //ruparm.matrix.rotate(-25*Math.sin(5*g_seconds), 0, 1, 0);
   ruparm.matrix.rotate(g_rarmAngle[0][0], 1, 0, 0);
